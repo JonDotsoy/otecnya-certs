@@ -6,6 +6,7 @@ const ContainerBlockElements = styled.div `
   margin: auto;
   padding: 0px 30px;
   ${({marginTop}) => marginTop && `padding-top: ${marginTop};`}
+  ${({marginBottom}) => marginBottom && `padding-bottom: ${marginBottom};`}
   ${({align}) => align && `text-align: ${align};`}
 `
 

@@ -1,156 +1,92 @@
+// @flow
+const t = require('flow-runtime')
 const router = require('express').Router()
+require('../../../libs/express-allow-async')(router)
 const fs = require('fs')
+const toLower = require('lodash/toLower')
+const get = require('lodash/get')
 const path = require('path')
 const React = require('react')
-const {default: styled} = require('styled-components')
+const {Cert} = require('../../../libs/store')
 
-const {MenuTop, LinkElement} = require('../../components/MenuTop')
-const {ContainerBlockElements} = require('../../components/ContainerBlockElements')
-const {BodyContainer} = require('../../components/BodyContainer')
-const {Input} = require('../../components/Input')
-const {Btn} = require('../../components/Btn')
+const {CertView, CertsView} = require('./certViews')
 
-const Title = styled.h1`
-  font-family: Roboto;
-  font-style: normal;
-  font-weight: normal;
-  line-height: normal;
-  font-size: 24px;
-
-  color: #222222;
-`
-
-const FieldDataValue = styled.p`
-  font-family: Roboto;
-  font-style: normal;
-  font-weight: normal;
-  line-height: normal;
-  font-size: 20px;
-
-  color: #222222;
-  margin: 0px;
-  margin-bottom: 20px;
-`
-
-const FieldDataTitle = styled.h3`
-  font-family: Roboto;
-  font-style: normal;
-  font-weight: bold;
-  line-height: normal;
-  font-size: 20px;
-
-  color: #222222;
-  margin: 0px;
-  margin-bottom: 10px;
-`
-
-const FieldDataContainer = ({title, value}) => (
-  <ContainerBlockElements>
-    <FieldDataTitle>{title}</FieldDataTitle>
-    <FieldDataValue>{value}</FieldDataValue>
-  </ContainerBlockElements>
-)
-
-const Cert = ({cert, rawLink}) => {
-  return (
-    <BodyContainer>
-
-      <MenuTop>
-        <LinkElement>Plantillas</LinkElement>
-        <LinkElement stylefloat='right'>Salir</LinkElement>
-      </MenuTop>
-
-      <ContainerBlockElements>
-        <Title>Certificado Aprovatorio</Title>
-      </ContainerBlockElements>
-
-      {
-        cert.data.map((d) => (
-          <FieldDataContainer
-            key={d.name}
-            title={d.title}
-            value={d.value}
-          />
-        ))
-      }
-
-      <ContainerBlockElements>
-        <Btn text='Descargar' style={{'marginRight': '10px'}} href={rawLink}/>
-        <Btn text='Eliminar' priority='danger' />
-      </ContainerBlockElements>
-
-      <ContainerBlockElements marginTop='30px'>
-        <Input label='Enviar por email' placeholder='mario@gmail.com' />
-      </ContainerBlockElements>
-
-      <ContainerBlockElements marginTop='20px'>
-        <Btn text='Enviar Copia' />
-      </ContainerBlockElements>
-
-    </BodyContainer>
-  )
-}
-
-const getCert = (idCert) => {
-  return {
-    id: '1234567',
-    data: [
-      {
-        name: 'name',
-        title: 'Nombre Completo',
-        type: 'text',
-        value: 'Jacobo Luis Cristóbal'
-      },
-      {
-        name: 'rut',
-        title: 'RUT',
-        type: 'text',
-        value: '13644241-4'
-      },
-      {
-        name: 'courseName',
-        title: 'Nombre del curso',
-        type: 'text',
-        value: 'Manejo A La Defensiva En Alto Montaña'
-      },
-      {
-        name: 'codeOtec',
-        title: 'Codigo de la OTEC',
-        type: 'text',
-        value: '111111'
-      },
-      {
-        name: 'codeCert',
-        title: 'Codigo del Certificado',
-        type: 'text',
-        value: '1234567'
-      }
-    ],
-    template: {
-      id: '1111111',
-      title: 'Certificado Aprovatorio',
-      fields: [/* ... */]
-    },
-    certPath: 'a path'// Ej. '/data/certs_raw/12345.pdf'
+const policyRequireLogin = (req, res, next) => {
+  if (get(req, ['session', 'auth', 'ok']) !== true) {
+    return res.redirect('/', 302)
   }
+  return next()
 }
 
-router.get('/certs/:idCert', (req, res, next) => {
-  const {idCert} = req.params
+router.get('/certs', policyRequireLogin)
+router.getAsync('/certs', async (req, res, next) => {
+  const {filter} = req.query
+  const filterLower = toLower(filter)
+  let certs = await Cert.find({})
 
-  const cert = getCert(idCert)
+  // Autocomplete data
+  const autocomplete = new Set()
+
+  certs.forEach(cert => {
+    autocomplete.add(cert._template.title)
+    autocomplete.add(cert.fullName)
+  })
+
+  if (filter) {
+    certs = certs.filter(cert => {
+      if (toLower(cert.fullName).indexOf(filterLower) !== -1) {
+        return true
+      }
+
+      if (toLower(cert._template.title) === filterLower) {
+        return true
+      }
+
+      return false
+    })
+  }
+
+  res.renderReact(<CertsView certs={certs} autocompleteSearch={autocomplete.values()} defaultValueSearch={filter}/>)
+})
+
+router.getAsync('/certs/:idCert', async (req, res, next) => {
+  const {idCert} = req.params
+  const authenticated = get(req, ['session', 'auth', 'ok'], false)
+
+  const cert = await Cert.findOne({code: idCert})
+
+  if (cert === null) return next()
+
+  console.log(authenticated)
 
   res.renderReact(
-    <Cert cert={cert} rawLink={`/certs/${idCert}/raw`} />
+    <CertView cert={cert} rawLink={`/certs/${idCert}/raw`} authenticatedMode={authenticated}/>
   )
 })
 
-router.get('/certs/:idCert/raw', (req, res, next) => {
-  const pathfile = path.resolve(__dirname,'../../../out.pdf')
+router.getAsync('/certs/:idCert/raw', async (req, res, next) => {
+  const {idCert} = req.params
 
-  fs.createReadStream(pathfile)
-  .pipe(res)
+  const cert = await Cert.findOne({code: idCert})
 
+  return res.redirect(`/certs/${idCert}/raw/${cert.code}-${cert.fullName}.pdf`, 301)
+})
+
+router.getAsync('/certs/:idCert/raw/:any', async (req, res, next) => {
+  const {idCert} = req.params
+
+  const cert = await Cert.findOne({code: idCert})
+
+  if (cert === null) return next()
+
+  const pathfile = path.resolve(`${cert.path_pdf_file}`)
+
+  await new Promise((resolve, reject) => {
+    fs.createReadStream(pathfile)
+    .on('error', reject)
+    .pipe(res)
+    .on('finish', () => resolve())
+  })
 })
 
 module.exports = router

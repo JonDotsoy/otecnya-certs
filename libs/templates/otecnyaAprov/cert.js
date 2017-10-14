@@ -14,6 +14,7 @@ module.exports.meta = {
       {
         name: 'fullName',
         title: 'Nombre Completo',
+        helptext: 'Juan Carlos Bodoque',
         type: 'text'
       },
       {
@@ -36,7 +37,7 @@ module.exports.meta = {
 
 /**
  * Create a document.
- * 
+ *
  * @param {Object} options
  * @param {string} options.fullName
  * @param {string} options.rut                 - Similar to ID number
@@ -100,7 +101,7 @@ module.exports.create = async function createCert (
       )
       .text(
         `${toUpper(courseName)}`,
-        /* left */ 65.008,
+        /* left */ 66.01,
         /* top */  492.23,
         {
           width: 925.984,
