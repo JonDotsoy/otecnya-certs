@@ -11,7 +11,7 @@ require('../../../libs/express-allow-async')(router)
 const {templates} = require('../../../libs/templates/templates')
 const {Cert} = require('../../../libs/store')
 
-const {TemplatesView, CreateCertView} = require('./TemplatesView')
+const {TemplatesView, CreateCertView} = require('./templatesView')
 
 const policyRequireSession = (req, res, next) => {
   if (get(req, ['session', 'auth', 'ok']) !== true) {

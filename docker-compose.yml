@@ -5,3 +5,13 @@ services:
     image: 'mongo:3.4.9'
     ports:
       - '27017:27017'
+
+  app:
+    image: "otecnya-certs:$npm_package_version"
+    build: .
+    links:
+      - "db:db"
+    environment:
+      - "DB_HOST=db"
+    ports:
+      - "3000"

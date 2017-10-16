@@ -11,8 +11,8 @@
     ],
     "plugins": [
         ["flow-runtime", {
-          "assert": false,
-          "warn": false,
+          "assert": true,
+          "warn": true,
           "annotate": false
         }]
     ]

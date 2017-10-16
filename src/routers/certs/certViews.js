@@ -1,4 +1,5 @@
 const React = require('react')
+const RUT = require('rut.js')
 const {default: styled} = require('styled-components')
 
 const {MenuTop, LinkElement} = require('../../components/MenuTop')
@@ -119,13 +120,13 @@ const CertView = module.exports.CertView = ({cert, deleteLink, rawLink, authenti
           <FieldDataContainer
             key={field.name}
             title={field.title}
-            value={cert[field.name]}
+            value={(typeof field.format === 'function') ? field.format(cert[field.name]) : cert[field.name]}
           />
         ))
       }
 
       <ContainerBlockElements>
-        <Btn text='Descargar' style={{'marginRight': '10px'}} href={rawLink}/>
+        <Btn text='Descargar' target="_blank" style={{'marginRight': '10px'}} href={rawLink}/>
         {
           authenticatedMode === true && 
           <Btn href={deleteLink} text='Eliminar' priority='danger' />
@@ -193,6 +194,7 @@ const TitleCert = styled.h3 `
   font-weight: normal;
   line-height: normal;
   font-size: 20px;
+  text-transform: uppercase;
 
   color: #222222;
 `
@@ -220,7 +222,6 @@ const CodeCert = styled.h3 `
 
   color: #777777;
 `
-
 
 const CertCardContainer = styled.a `
   display: block;

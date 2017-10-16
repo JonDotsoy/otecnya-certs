@@ -30,11 +30,11 @@ const BtnElement = styled.button `
 const BtnElementLink = BtnElement.withComponent('a')
 
 module.exports.Btn = (opts) => {
-  const {text, type, priority, style, href} = opts
+  const {text, type, priority, style, href, ...more} = opts
 
   const ClassBtn = href ? BtnElementLink : BtnElement
 
   return (
-    <ClassBtn href={href} style={style} priority={priority} type={type}>{text}</ClassBtn>
+    <ClassBtn href={href} style={style} priority={priority} type={type} {...more}>{text}</ClassBtn>
   )
 }

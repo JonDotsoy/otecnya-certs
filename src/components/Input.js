@@ -37,6 +37,10 @@ const InputFormInput = styled.input `
   &::placeholder {
     color: #AAAAAA;
   }
+
+  &[disabled] {
+    background-color: #ddd;
+  }
 `
 
 module.exports.Input = (opts) => {

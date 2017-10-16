@@ -8,6 +8,20 @@ const get = require('lodash/get')
 const path = require('path')
 const React = require('react')
 const {Cert} = require('../../../libs/store')
+const {templates} = require('../../../libs/templates/templates')
+
+const updateCertData = (cert) => {
+  const prevTemplate = templates.find(({meta:{id}}) => cert._template.id === id)
+
+  const template = prevTemplate.meta
+
+  const newCert = {
+    ...cert.toObject(),
+    _template: template || cert._template
+  }
+
+  return newCert
+}
 
 const {CertView, CertsView, DeleteCertView} = require('./certViews')
 
@@ -74,8 +88,10 @@ router.getAsync('/certs/:idCert/delete', async (req, res, next) => {
     return next()
   }
 
+  const nextCert = updateCertData(cert)
+
   res.renderReact(
-    <DeleteCertView cert={cert} certLink={`/certs/${idCert}`} submitDeleteLink={`/certs/${idCert}/delete`} />
+    <DeleteCertView cert={nextCert} certLink={`/certs/${idCert}`} submitDeleteLink={`/certs/${idCert}/delete`} />
   )
 })
 
@@ -87,10 +103,10 @@ router.getAsync('/certs/:idCert', async (req, res, next) => {
 
   if (cert === null) return next()
 
-  console.log(authenticated)
+  const nextCert = updateCertData(cert)
 
   res.renderReact(
-    <CertView cert={cert} deleteLink={`/certs/${idCert}/delete`} rawLink={`/certs/${idCert}/raw`} authenticatedMode={authenticated}/>
+    <CertView cert={nextCert} deleteLink={`/certs/${idCert}/delete`} rawLink={`/certs/${idCert}/raw`} authenticatedMode={authenticated}/>
   )
 })
 

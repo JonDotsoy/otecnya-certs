@@ -15,22 +15,52 @@ module.exports.meta = {
         name: 'fullName',
         title: 'Nombre Completo',
         helptext: 'Juan Carlos Bodoque',
-        type: 'text'
+        type: 'text',
+        format: toUpper,
+        required: true,
       },
       {
         name: 'rut',
         title: 'RUT',
-        type: 'text'
+        helptext: '12.345.678-9',
+        type: 'text',
+        format: (value) => RUT.format(RUT.clean(value)),
+        required: true,
       },
       {
         name: 'courseName',
         title: 'Nombre del curso',
-        type: 'text'
+        helptext: 'MANEJO A LA DEFENSIVA EN ALTA MONTAÑA',
+        type: 'text',
+        format: toUpper,
+        required: true,
       },
       {
         name: 'codeOtec',
         title: 'Codigo de la OTEC',
-        type: 'text'
+        type: 'text',
+        default: '222165',
+        required: true,
+      },
+      {
+        name: 'createdAt',
+        title: 'Fecha de emisión',
+        type: 'date',
+        get default () {
+          return (new Date()).toLocaleDateString()
+        }
+      },
+      {
+        name: 'expiration',
+        title: 'Fecha de expiración',
+        type: 'date',
+        get default () {
+          const createdAtDate = new Date()
+
+          createdAtDate.setYear(createdAtDate.getYear() + 4)
+
+          return createdAtDate.toLocaleDateString()
+        }
       }
     ],
 }

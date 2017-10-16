@@ -20,8 +20,8 @@ const textToMD5 = (data: Buffer|string) => crypto.createHash('md5').update(data,
 const urlMongoDB: string = url.format({
   protocol: 'mongodb',
   slashes: true,
-  hostname: '192.168.99.100',
-  pathname: 'certs',
+  hostname: process.env.DB_HOST || '192.168.99.100',
+  pathname: process.env.DB_NAME || 'certs',
 })
 
 const con = module.exports.con = mongoose.createConnection(urlMongoDB, {})
