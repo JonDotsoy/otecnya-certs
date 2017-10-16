@@ -1,3 +1,5 @@
+require('../libs/express-allow-async')
+
 // SERVER
 const express = require('express')
 // const React = require('react')
@@ -22,7 +24,7 @@ injectGlobal`
 
 const app = express()
 
-require('../libs/express-allow-async')(app)
+console.log('app.get')
 
 app.use(session({
   secret: SECRET_KEY_SESSION,

@@ -1,21 +1,26 @@
-const makeRefApp = (router, methodNameRef, method) => {
-  router[methodNameRef] = (path, fn) => {
+const noop = require('lodash/noop')
 
-    router[method](path, (req, res, next) => {
-      Promise
-      .resolve(fn(req, res, next))
-      .catch(next)
-    })
+const Router = require('express/lib/router')
 
+const promiseResolveArgs = (methodProvider) => function (...args) {
+  const context = this
+
+  for (const indexArg in args) {
+    const arg = args[indexArg]
+    if (typeof arg === 'function') {
+      const fn = arg
+      args[indexArg] = (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
+    }
   }
+
+  this[methodProvider](...args)
 }
 
-module.exports = (router) => {
-  makeRefApp(router, 'getAsync', 'get')
-  makeRefApp(router, 'postAsync', 'post')
-  makeRefApp(router, 'putAsync', 'put')
-  makeRefApp(router, 'deleteAsync', 'delete')
-  makeRefApp(router, 'headAsync', 'head')
-  makeRefApp(router, 'useAsync', 'use')
-  return router
-}
+Router.getAsync = promiseResolveArgs('get')
+Router.postAsync = promiseResolveArgs('post')
+Router.headAsync = promiseResolveArgs('head')
+Router.deleteAsync = promiseResolveArgs('delete')
+Router.putAsync = promiseResolveArgs('put')
+Router.useAsync = promiseResolveArgs('use')
+
+module.exports = noop

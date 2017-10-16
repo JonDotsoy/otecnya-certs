@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "gulp build-scripts",
     "watch": "nodemon --require \"babel-core/register\" src/server"
   },
   "keywords": [],
@@ -17,6 +18,7 @@
     "body-parser": "^1.18.2",
     "express": "^4.16.1",
     "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.0",
     "lodash": "^4.17.4",
     "nodemon": "^1.12.1",
     "pdfkit": "^0.8.3",

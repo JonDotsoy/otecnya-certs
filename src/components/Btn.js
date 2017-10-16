@@ -2,6 +2,8 @@ const React = require('react')
 const {default: styled} = require('styled-components')
 
 const BtnElement = styled.button `
+  display: inline-block;
+
   font-family: Roboto;
   font-style: normal;
   font-weight: bold;

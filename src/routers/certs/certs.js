@@ -9,7 +9,7 @@ const path = require('path')
 const React = require('react')
 const {Cert} = require('../../../libs/store')
 
-const {CertView, CertsView} = require('./certViews')
+const {CertView, CertsView, DeleteCertView} = require('./certViews')
 
 const policyRequireLogin = (req, res, next) => {
   if (get(req, ['session', 'auth', 'ok']) !== true) {
@@ -17,7 +17,7 @@ const policyRequireLogin = (req, res, next) => {
   }
   return next()
 }
-
+ 
 router.get('/certs', policyRequireLogin)
 router.getAsync('/certs', async (req, res, next) => {
   const {filter} = req.query
@@ -49,6 +49,36 @@ router.getAsync('/certs', async (req, res, next) => {
   res.renderReact(<CertsView certs={certs} autocompleteSearch={autocomplete.values()} defaultValueSearch={filter}/>)
 })
 
+router.postAsync('/certs/:idCert/delete', async (req, res, next) => {
+  const {idCert} = req.params
+  const authenticated = get(req, ['session', 'auth', 'ok'], false)
+
+  const cert = await Cert.findOne({code: idCert})
+
+  if (cert === null) {
+    return next()
+  }
+
+  await Cert.remove({code: idCert})
+
+  res.redirect(`/certs`, 301)
+})
+
+router.getAsync('/certs/:idCert/delete', async (req, res, next) => {
+  const {idCert} = req.params
+  const authenticated = get(req, ['session', 'auth', 'ok'], false)
+
+  const cert = await Cert.findOne({code: idCert})
+
+  if (cert === null) {
+    return next()
+  }
+
+  res.renderReact(
+    <DeleteCertView cert={cert} certLink={`/certs/${idCert}`} submitDeleteLink={`/certs/${idCert}/delete`} />
+  )
+})
+
 router.getAsync('/certs/:idCert', async (req, res, next) => {
   const {idCert} = req.params
   const authenticated = get(req, ['session', 'auth', 'ok'], false)
@@ -60,7 +90,7 @@ router.getAsync('/certs/:idCert', async (req, res, next) => {
   console.log(authenticated)
 
   res.renderReact(
-    <CertView cert={cert} rawLink={`/certs/${idCert}/raw`} authenticatedMode={authenticated}/>
+    <CertView cert={cert} deleteLink={`/certs/${idCert}/delete`} rawLink={`/certs/${idCert}/raw`} authenticatedMode={authenticated}/>
   )
 })
 

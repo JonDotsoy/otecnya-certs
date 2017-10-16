@@ -91,7 +91,7 @@ const FieldDataContainer = ({title, value}) => (
   </ContainerBlockElements>
 )
 
-const CertView = module.exports.CertView = ({cert, rawLink, authenticatedMode}) => {
+const CertView = module.exports.CertView = ({cert, deleteLink, rawLink, authenticatedMode}) => {
   return (
     <BodyContainer>
 
@@ -128,7 +128,7 @@ const CertView = module.exports.CertView = ({cert, rawLink, authenticatedMode}) 
         <Btn text='Descargar' style={{'marginRight': '10px'}} href={rawLink}/>
         {
           authenticatedMode === true && 
-          <Btn text='Eliminar' priority='danger' />
+          <Btn href={deleteLink} text='Eliminar' priority='danger' />
         }
       </ContainerBlockElements>
 
@@ -229,3 +229,44 @@ const CertCardContainer = styled.a `
   padding: 4px 0px;
   text-decoration: none;
 `
+
+const DeleteTitle = styled.h1 `
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: bold;
+  line-height: normal;
+  font-size: 24px;
+  text-align: center;
+
+  color: #F37878;
+`
+
+const DeleteCertView = module.exports.DeleteCertView = ({cert, certLink, submitDeleteLink}) => (
+  <BodyContainer>
+    <MenuTop>
+      <LinkElement href="/templates">Plantillas</LinkElement>
+      <LinkElement href="/logout" stylefloat='right'>Salir</LinkElement>
+    </MenuTop>
+
+    <ContainerBlockElements marginTop="30px">
+      <DeleteTitle>¿Realmente quiere eliminar este certificado?</DeleteTitle>
+    </ContainerBlockElements>
+
+    <ContainerBlockElements  marginTop="10px">
+      <CertCardView
+        key={cert.code}
+        fullName={cert.fullName}
+        code={cert.code}
+        templateName={cert._template.title}
+      />
+    </ContainerBlockElements>
+
+    <ContainerBlockElements marginTop="30px">
+      <form action={submitDeleteLink} method="POST" style={{'display': 'inline'}}>
+        <Btn type="submit" text='Confirmar' style={{'marginRight': '10px'}} priority='danger'/>
+      </form>
+      <Btn text='Cancelar' href={certLink}></Btn>
+    </ContainerBlockElements>
+
+  </BodyContainer>
+)
