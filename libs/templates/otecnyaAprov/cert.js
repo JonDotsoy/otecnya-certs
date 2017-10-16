@@ -2,6 +2,7 @@ const PDFDocument = require('pdfkit')
 const blobStream = require('blob-stream')
 const toUpper = require('lodash/toUpper')
 const RUT = require('rut.js')
+const moment = require('moment')
 
 const fs = require('fs')
 const path = require('path')
@@ -47,7 +48,7 @@ module.exports.meta = {
         title: 'Fecha de emisión',
         type: 'date',
         get default () {
-          return (new Date()).toLocaleDateString()
+          return moment(new Date()).format('YYYY-MM-DD')
         }
       },
       {
@@ -55,11 +56,7 @@ module.exports.meta = {
         title: 'Fecha de expiración',
         type: 'date',
         get default () {
-          const createdAtDate = new Date()
-
-          createdAtDate.setYear(createdAtDate.getYear() + 4)
-
-          return createdAtDate.toLocaleDateString()
+          return moment(new Date()).add(4, 'year').format('YYYY-MM-DD')
         }
       }
     ],

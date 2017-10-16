@@ -35,6 +35,8 @@ const FieldDataValue = styled.p`
   color: #222222;
   margin: 0px;
   margin-bottom: 20px;
+
+  ${({empty}) => empty && `color:#aaaaaa;` }
 `
 
 const FieldDataTitle = styled.h3`
@@ -88,7 +90,11 @@ const InputSearch = ({defaultValue, autocomplete, listName}) => (
 const FieldDataContainer = ({title, value}) => (
   <ContainerBlockElements>
     <FieldDataTitle>{title}</FieldDataTitle>
-    <FieldDataValue>{value}</FieldDataValue>
+    {
+      value
+        ? <FieldDataValue>{value}</FieldDataValue>
+        : <FieldDataValue empty>[Sin definir]</FieldDataValue>
+    }
   </ContainerBlockElements>
 )
 
@@ -120,7 +126,14 @@ const CertView = module.exports.CertView = ({cert, deleteLink, rawLink, authenti
           <FieldDataContainer
             key={field.name}
             title={field.title}
-            value={(typeof field.format === 'function') ? field.format(cert[field.name]) : cert[field.name]}
+            value={
+              cert[field.name]
+                ?
+                  (typeof field.format === 'function')
+                    ? field.format(cert[field.name])
+                    : cert[field.name]
+                : false
+            }
           />
         ))
       }
