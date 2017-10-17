@@ -17,7 +17,7 @@ const {TemplatesView, CreateCertView} = require('./templatesView')
 
 const policyRequireSession = (req, res, next) => {
   if (get(req, ['session', 'auth', 'ok']) !== true) {
-    return res.redirect('/', 302)
+    return res.redirect(302, '/')
   }
   return next()
 }
@@ -38,8 +38,7 @@ router.getAsync('/templates/preview', async (req, res, next) => {
   const template = templates.find(({meta}) => meta.id === idTemplate)
 
   await template.create({
-    ...req.query,
-    code: '000000',
+    data: {...req.query, code: '000000'},
     stream: res,
   })
 
@@ -70,22 +69,24 @@ router.postAsync('/create/:idTemplate', async (req, res, next) => {
 
   if (req.body._preview) {
     return res.redirect(
+      302,
       url.format({
         pathname: `/templates/preview`,
         query: {
           ...req.body,
           idTemplate,
         },
-      }),
-      302
+      })
     )
   }
 
   const data = {}
 
+  // return res.json( await Cert.manufacture(template, req.body) )
+
   const {ok, data: cert} = await Cert.manufacture(template, req.body)
 
-  return res.redirect(`/certs/${cert.code}`, 302)
+  return res.redirect(302, `/certs/${cert.code}`)
 })
 
 module.exports = router

@@ -32,36 +32,54 @@ const Cert = module.exports.Cert = con.model('certs', CertSchema)
 
 Cert.manufacture = async function manufactureCertFromTemplate (template: any, data: any) {
   // Validate Data
-  const dataCert = {}
+  const certData = {
+    createAt: new Date(),
+    path_pdf_file: undefined,
+    fullName: undefined,
+    code: undefined,
+    rut: undefined,
+    data: {},
+    _template: null,
+  }
+
   for (const field of template.meta.fields) {
-    if ((field.name in data) === false) {
+    if (field.required === true && (field.name in data) === false) {
       throw new TypeError(`Require "${field.name}" param.`)
-    } else {
-      dataCert[field.name] = data[field.name]
+    }
+
+    certData.data[field.name] = data[field.name]
+
+    switch (field.name) {
+      case 'rut':
+      case 'fullName':
+        certData[field.name] = data[field.name]
     }
   }
 
-  // set new data in the cert
+  // prepare next id number
   const CertCode: number = Number(await Cert.count()) + 23230
 
-  dataCert.code = `${CertCode}`
-  dataCert._template = {...template.meta, image: undefined}
-  dataCert.path_pdf_file = path.resolve(PATHSTOREPDF, `./cert-${CertCode}.pdf`)
+  certData.code = certData.data.code = `${CertCode}`
+  certData._template = {...template.meta, image: undefined}
+  certData.path_pdf_file = path.resolve(PATHSTOREPDF, `./cert-${CertCode}.pdf`)
 
-  // Make pdf file
+  // Make PDF file
   const streams = await template.create({
-    ...dataCert,
-    stream: fs.createWriteStream(dataCert.path_pdf_file),
+    data: certData.data,
+    stream: fs.createWriteStream(certData.path_pdf_file),
   })
+
+  // return certData
 
   // Save Cert generated
   let cert
 
   try {
-    cert = await (new Cert(dataCert)).save()
+    cert = await (new Cert(certData)).save()
   } catch (ex) {
     try {
-      fs.unlinkSync(dataCert.path_pdf_file)
+      // Has error remove the file created
+      fs.unlinkSync(certData.path_pdf_file)
     } catch (ex) {
       console.error(ex)
     }

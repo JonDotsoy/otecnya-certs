@@ -9,7 +9,7 @@ const path = require('path')
 
 const AprobadoReprobadoList = ['Aprobado', 'Reprobado']
 
-module.exports.meta = {
+const meta = module.exports.meta = {
   id: '2',
   title: 'Certificado de Competencias',
   image: `data:image/png;base64,${fs.readFileSync(path.resolve(__dirname, './cover.png')).toString('base64')}`,
@@ -35,6 +35,7 @@ module.exports.meta = {
       title: 'Clase (Licencia Municipalidad)',
       helptext: 'B/D',
       type: 'text',
+      format: toUpper,
       required: true,
     },
     {
@@ -167,15 +168,21 @@ module.exports.meta = {
       title: 'Fecha de vencimiento Certificación',
       type: 'date',
       get default () {
-        return moment(new Date()).add(4, 'year').format('YYYY-MM-DD')
+        return moment(new Date()).add(1, 'year').format('YYYY-MM-DD')
       },
       required: true,
     },
   ]
 }
 
-module.exports.create = async (opts) => {
-  const {stream: setStream = blobStream(), streams: setStreams = []} = opts
+module.exports.create = async ({
+  data,
+  stream: setStream = blobStream(),
+  streams: setStreams = [],
+}) => {
+
+  // format data
+
   const {
     fullName,
     rut,
@@ -198,7 +205,7 @@ module.exports.create = async (opts) => {
     capacitationRutEmpresaSolicitante,
     createdAt,
     expiration
-  } = opts
+  } = data
 
   const doc = new PDFDocument({
     size: [ 816, 1056 ]

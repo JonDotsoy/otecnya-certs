@@ -10,7 +10,7 @@ const React = require('react')
 const {Cert} = require('../../../libs/store')
 const {templates} = require('../../../libs/templates/templates')
 
-const updateCertData = (cert) => {
+const normalizeCert = (cert) => {
   const prevTemplate = templates.find(({meta:{id}}) => cert._template.id === id)
 
   const template = prevTemplate.meta
@@ -88,7 +88,7 @@ router.getAsync('/certs/:idCert/delete', async (req, res, next) => {
     return next()
   }
 
-  const nextCert = updateCertData(cert)
+  const nextCert = normalizeCert(cert)
 
   res.renderReact(
     <DeleteCertView cert={nextCert} certLink={`/certs/${idCert}`} submitDeleteLink={`/certs/${idCert}/delete`} />
@@ -101,9 +101,13 @@ router.getAsync('/certs/:idCert', async (req, res, next) => {
 
   const cert = await Cert.findOne({code: idCert})
 
+  // return res.json(cert)
+
   if (cert === null) return next()
 
-  const nextCert = updateCertData(cert)
+  const nextCert = normalizeCert(cert)
+
+  // return res.json(nextCert)
 
   res.renderReact(
     <CertView cert={nextCert} deleteLink={`/certs/${idCert}/delete`} rawLink={`/certs/${idCert}/raw`} authenticatedMode={authenticated}/>

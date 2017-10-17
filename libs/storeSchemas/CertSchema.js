@@ -8,7 +8,7 @@ const CertSchema = module.exports.CertSchema = new Schema({
   fullName: {type: String, required},
   code: {type: String, required, unique: true},
   rut: {type: String, required},
-  courseName: {type: String, required},
-  codeOtec: {type: String, required},
-  _template: {},
+  createAt: {type: Date, required},
+  data: {},
+  _template: {type: {}, required},
 })

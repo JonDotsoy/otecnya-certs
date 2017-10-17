@@ -77,6 +77,12 @@ module.exports.meta = {
  */
 module.exports.create = async function createCert (
   {
+    data,
+    stream: setStream = blobStream(),
+    streams: setStreams = [],
+  }
+) {
+  const {
     fullName,
     rut,
     courseName,
@@ -84,10 +90,7 @@ module.exports.create = async function createCert (
     createdAt,
     expiration,
     code,
-    stream: setStream = blobStream(),
-    streams: setStreams = [],
-  }
-) {
+  } = data
 
   const doc = new PDFDocument({
     size: [ 1056, 816 ]

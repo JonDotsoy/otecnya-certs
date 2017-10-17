@@ -2,6 +2,7 @@ const React = require('react')
 const RUT = require('rut.js')
 const {default: styled} = require('styled-components')
 
+const moment = require('moment-timezone')
 const {MenuTop, LinkElement} = require('../../components/MenuTop')
 const {ContainerBlockElements} = require('../../components/ContainerBlockElements')
 const {BodyContainer} = require('../../components/BodyContainer')
@@ -122,20 +123,24 @@ const CertView = module.exports.CertView = ({cert, deleteLink, rawLink, authenti
       </ContainerBlockElements>
 
       {
-        cert._template.fields.map((field) => (
-          <FieldDataContainer
-            key={field.name}
-            title={field.title}
-            value={
-              cert[field.name]
-                ?
-                  (typeof field.format === 'function')
-                    ? field.format(cert[field.name])
-                    : cert[field.name]
-                : false
-            }
-          />
-        ))
+        cert._template.fields.map((field) => {
+          const {name, title} = field
+          const valueBrute = cert.data[name]
+          let value = (typeof field.format === 'function') ? field.format(valueBrute) : valueBrute
+
+          if (field.type === 'date') {
+            value = moment(valueBrute).format('LL')
+          }
+
+          return (
+            <FieldDataContainer
+              key={name}
+              name={name}
+              title={title}
+              value={value}
+            />
+          )
+        })
       }
 
       <ContainerBlockElements>
