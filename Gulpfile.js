@@ -35,7 +35,7 @@ const buildFilesTask = () => (
 )
 
 const copyFileTask = () => (
-  gulp.src(['**/templates/*/*.+(png|ttf)','package.json', 'package-lock.json', 'public/*'], { base: __dirname })
+  gulp.src(['libs/**/templates/*/*.+(png|ttf)','package.json', 'package-lock.json', 'public/*'], { base: __dirname })
   .pipe(gulp.dest('dist'))
 )
 

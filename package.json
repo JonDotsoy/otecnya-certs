@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "gulp dist",
-    "start": "node dist/src/server.js",
+    "start": "node src/server.js",
     "services": "docker-compose",
     "watch": "nodemon --require \"babel-core/register\" src/server"
   },
