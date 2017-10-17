@@ -25,7 +25,7 @@ module.exports.meta = {
     {
       name: 'rut',
       title: 'RUT',
-      helptext: '12.345.678-9',
+      helptext: '11.111.111-1',
       type: 'text',
       format: (value) => RUT.format(RUT.clean(value)),
       required: true,
