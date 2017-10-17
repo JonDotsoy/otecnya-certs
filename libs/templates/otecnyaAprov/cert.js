@@ -49,7 +49,8 @@ module.exports.meta = {
       type: 'date',
       get default () {
         return moment(new Date()).format('YYYY-MM-DD')
-      }
+      },
+      required: true,
     },
     {
       name: 'expiration',
@@ -57,7 +58,8 @@ module.exports.meta = {
       type: 'date',
       get default () {
         return moment(new Date()).add(4, 'year').format('YYYY-MM-DD')
-      }
+      },
+      required: true,
     }
   ],
 }

@@ -32,12 +32,12 @@ router.get('/templates', (req, res, next) => {
   res.renderReact(view)
 })
 
-router.get('/templates/preview', (req, res, next) => {
+router.getAsync('/templates/preview', async (req, res, next) => {
   const {idTemplate} = req.query
 
   const template = templates.find(({meta}) => meta.id === idTemplate)
 
-  template.create({
+  await template.create({
     ...req.query,
     code: '000000',
     stream: res,

@@ -96,7 +96,7 @@ const CreateCertView = module.exports.CreateCertView = ({urlSubmit, fields}) => 
         {
           fields.map(field => (
             <ContainerBlockElements key={field.name} marginTop='20px'>
-              <Input disabled={field.disabled} placeholder={field.helptext} name={field.name} label={field.title} type={field.type} required={field.required} defaultValue={field.default} />
+              <Input list={field.list} disabled={field.disabled} placeholder={field.helptext} name={field.name} label={field.title} type={field.type} required={field.required} defaultValue={field.default} />
             </ContainerBlockElements>
           ))
         }
