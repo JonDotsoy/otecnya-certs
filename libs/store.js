@@ -42,7 +42,8 @@ Cert.manufacture = async function manufactureCertFromTemplate (template: any, da
   }
 
   // set new data in the cert
-  const CertCode: number = Number(await Cert.count()) + 22230
+  const CertCode: number = Number(await Cert.count()) + 23230
+
   dataCert.code = `${CertCode}`
   dataCert._template = {...template.meta, image: undefined}
   dataCert.path_pdf_file = path.resolve(PATHSTOREPDF, `./cert-${CertCode}.pdf`)

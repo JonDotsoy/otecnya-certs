@@ -2,7 +2,7 @@ const PDFDocument = require('pdfkit')
 const blobStream = require('blob-stream')
 const toUpper = require('lodash/toUpper')
 const RUT = require('rut.js')
-const moment = require('moment')
+const moment = require('moment-timezone')
 
 const fs = require('fs')
 const path = require('path')
@@ -12,54 +12,54 @@ module.exports.meta = {
   title: 'Certificado Aprovatorio',
   image: `data:image/png;base64,${fs.readFileSync(path.resolve(__dirname, './cover.png')).toString('base64')}`,
   fields: [
-      {
-        name: 'fullName',
-        title: 'Nombre Completo',
-        helptext: 'Juan Carlos Bodoque',
-        type: 'text',
-        format: toUpper,
-        required: true,
-      },
-      {
-        name: 'rut',
-        title: 'RUT',
-        helptext: '12.345.678-9',
-        type: 'text',
-        format: (value) => RUT.format(RUT.clean(value)),
-        required: true,
-      },
-      {
-        name: 'courseName',
-        title: 'Nombre del curso',
-        helptext: 'MANEJO A LA DEFENSIVA EN ALTA MONTAÑA',
-        type: 'text',
-        format: toUpper,
-        required: true,
-      },
-      {
-        name: 'codeOtec',
-        title: 'Codigo de la OTEC',
-        type: 'text',
-        default: '222165',
-        required: true,
-      },
-      {
-        name: 'createdAt',
-        title: 'Fecha de emisión',
-        type: 'date',
-        get default () {
-          return moment(new Date()).format('YYYY-MM-DD')
-        }
-      },
-      {
-        name: 'expiration',
-        title: 'Fecha de expiración',
-        type: 'date',
-        get default () {
-          return moment(new Date()).add(4, 'year').format('YYYY-MM-DD')
-        }
+    {
+      name: 'fullName',
+      title: 'Nombre Completo',
+      helptext: 'Juan Carlos Bodoque',
+      type: 'text',
+      format: toUpper,
+      required: true,
+    },
+    {
+      name: 'rut',
+      title: 'RUT',
+      helptext: '12.345.678-9',
+      type: 'text',
+      format: (value) => RUT.format(RUT.clean(value)),
+      required: true,
+    },
+    {
+      name: 'courseName',
+      title: 'Nombre del curso',
+      helptext: 'MANEJO A LA DEFENSIVA EN ALTA MONTAÑA',
+      type: 'text',
+      format: toUpper,
+      required: true,
+    },
+    {
+      name: 'codeOtec',
+      title: 'Codigo de la OTEC',
+      type: 'text',
+      default: '222165',
+      required: true,
+    },
+    {
+      name: 'createdAt',
+      title: 'Fecha de emisión',
+      type: 'date',
+      get default () {
+        return moment(new Date()).format('YYYY-MM-DD')
       }
-    ],
+    },
+    {
+      name: 'expiration',
+      title: 'Fecha de expiración',
+      type: 'date',
+      get default () {
+        return moment(new Date()).add(4, 'year').format('YYYY-MM-DD')
+      }
+    }
+  ],
 }
 
 /**
@@ -79,6 +79,8 @@ module.exports.create = async function createCert (
     rut,
     courseName,
     codeOtec,
+    createdAt,
+    expiration,
     code,
     stream: setStream = blobStream(),
     streams: setStreams = [],
@@ -140,10 +142,10 @@ module.exports.create = async function createCert (
       .fontSize(13)
       .text(
         `Registro Otec N°${codeOtec}`,
-        /* left */ 820,
+        /* left */ 780,
         /* top */  526,
         {
-          width: 400,
+          width: 600,
           align: 'left'
         }
       )
@@ -151,10 +153,34 @@ module.exports.create = async function createCert (
       .fillColor('#847c74')
       .text(
         `Certificado N°${code}`,
-        /* left */ 820,
+        /* left */ 780,
         /* top */  543,
         {
-          width: 400,
+          width: 600,
+          align: 'left'
+        }
+      )
+      // dates
+      .font(`${__dirname}/micross.ttf`)
+      .fillColor('#847c74')
+      .fontSize(13)
+      .text(
+        `Fecha de emisión ${moment(createdAt).format('MMMM YYYY')}.`,
+        /* left */ 150,
+        /* top */  526,
+        {
+          width: 600,
+          align: 'left'
+        }
+      )
+      .font(`${__dirname}/micross.ttf`)
+      .fillColor('#847c74')
+      .text(
+        `Fecha de expiración ${moment(expiration).format('MMMM YYYY')}.`,
+        /* left */ 150,
+        /* top */  543,
+        {
+          width: 600,
           align: 'left'
         }
       )

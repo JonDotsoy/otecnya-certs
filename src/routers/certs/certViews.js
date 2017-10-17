@@ -146,16 +146,6 @@ const CertView = module.exports.CertView = ({cert, deleteLink, rawLink, authenti
         }
       </ContainerBlockElements>
 
-      {/*
-      <ContainerBlockElements marginTop='30px'>
-        <Input label='Enviar por email' placeholder='mario@gmail.com' />
-      </ContainerBlockElements>
-
-      <ContainerBlockElements marginTop='20px'>
-        <Btn text='Enviar Copia' />
-      </ContainerBlockElements>
-      */}
-
     </BodyContainer>
   )
 }

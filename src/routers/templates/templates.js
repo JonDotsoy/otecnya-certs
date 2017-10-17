@@ -2,6 +2,8 @@ const React = require('react')
 const router = require('express').Router()
 const get = require('lodash/get')
 const fs = require('fs')
+const util = require('util')
+const url = require('url')
 const path = require('path')
 const os = require('os')
 const bodyParser = require('body-parser')
@@ -30,6 +32,23 @@ router.get('/templates', (req, res, next) => {
   res.renderReact(view)
 })
 
+router.get('/templates/preview', (req, res, next) => {
+  const {idTemplate} = req.query
+
+  const template = templates.find(({meta}) => meta.id === idTemplate)
+
+  template.create({
+    ...req.query,
+    code: '000000',
+    stream: res,
+  })
+
+  // return res.json({
+  //   query: req.query,
+  //   template: util.inspect(),
+  // })
+})
+
 router.get('/create/:idTemplate', policyRequireSession)
 router.get('/create/:idTemplate', (req, res, next) => {
   const {idTemplate} = req.params
@@ -48,6 +67,19 @@ router.post('/create/:idTemplate', bodyParser.urlencoded({ extended: false }))
 router.postAsync('/create/:idTemplate', async (req, res, next) => {
   const {idTemplate} = req.params
   const template = templates.find(({meta}) => meta.id === idTemplate)
+
+  if (req.body._preview) {
+    return res.redirect(
+      url.format({
+        pathname: `/templates/preview`,
+        query: {
+          ...req.body,
+          idTemplate,
+        },
+      }),
+      302
+    )
+  }
 
   const data = {}
 

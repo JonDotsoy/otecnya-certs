@@ -103,6 +103,7 @@ const CreateCertView = module.exports.CreateCertView = ({urlSubmit, fields}) => 
 
         <ContainerBlockElements marginTop='30px' align='center'>
           <Btn type='submit' text='Crear certificado' />
+          <Btn priority='link-block' value='true' name='_preview' type='submit' text='Previsualizar' style={{fontSize: '12px'}} />
         </ContainerBlockElements>
 
       </form>

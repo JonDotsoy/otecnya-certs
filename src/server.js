@@ -1,5 +1,10 @@
 require('../libs/express-allow-async')
 
+const moment = require('moment-timezone')
+require('moment/locale/es')
+
+moment.tz.setDefault('America/Santiago')
+
 // SERVER
 const express = require('express')
 // const React = require('react')
@@ -10,11 +15,14 @@ const url = require('url')
 const bodyParser = require('body-parser')
 const {injectGlobal} = require('styled-components')
 
+const {default: reset} = require('styled-reset')
+
 const store = require('../libs/store')
 
-const SECRET_KEY_SESSION = '12345'
+const SECRET_KEY_SESSION = process.env.SECRET_KEY_SESSION || '123456'
 
 injectGlobal`
+  ${reset}
   @import url('https://fonts.googleapis.com/css?family=Roboto');
 
   body {
@@ -23,8 +31,6 @@ injectGlobal`
 `
 
 const app = express()
-
-console.log('app.get')
 
 app.use(session({
   secret: SECRET_KEY_SESSION,

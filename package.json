@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "gulp dist",
+    "start": "node dist/src/server.js",
     "services": "docker-compose",
     "watch": "nodemon --require \"babel-core/register\" src/server"
   },
@@ -32,11 +33,13 @@
     "flow-runtime": "^0.14.0",
     "lodash": "^4.17.4",
     "moment": "^2.19.1",
+    "moment-timezone": "^0.5.13",
     "mongoose": "^4.12.2",
     "pdfkit": "^0.8.3",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "rut.js": "^0.3.3",
-    "styled-components": "^2.2.1"
+    "styled-components": "^2.2.1",
+    "styled-reset": "^0.1.2"
   }
 }

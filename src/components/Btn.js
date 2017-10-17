@@ -1,9 +1,23 @@
 const React = require('react')
-const {default: styled} = require('styled-components')
+const {default: styled, css} = require('styled-components')
+
+const BtnStyledLinkBlock = css `
+  background-color: transparent;
+  color: #222;
+  display: block;
+  padding: 10px 10px;
+  width: 100%;
+  
+  &:hover, &:focus {
+    box-shadow: none;
+    text-decoration: underline;
+  }
+`
 
 const BtnElement = styled.button `
   display: inline-block;
 
+  box-sizing: border-box;
   font-family: Roboto;
   font-style: normal;
   font-weight: bold;
@@ -25,6 +39,7 @@ const BtnElement = styled.button `
   }
 
   ${({priority}) => (priority === 'danger' && `background-color: #F16A6A;`)}
+  ${({priority}) => (priority === 'link-block' && BtnStyledLinkBlock)}
 `
 
 const BtnElementLink = BtnElement.withComponent('a')
