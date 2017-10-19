@@ -53,7 +53,7 @@ module.exports.Input = (opts) => {
       <InputLabel>{label}</InputLabel>
       <InputFormInput {...opts} list={nameList}></InputFormInput>
       {
-        list &&
+        Array.isArray(list) &&
         <datalist id={nameList}>
           {
             list.map(element => (
