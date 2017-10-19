@@ -136,7 +136,7 @@ const CertView = module.exports.CertView = ({cert, deleteLink, rawLink, authenti
             <FieldDataContainer
               key={name}
               name={name}
-              title={title}
+              title={`${title}`}
               value={value}
             />
           )

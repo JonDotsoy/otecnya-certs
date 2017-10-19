@@ -14,6 +14,14 @@ const OTECNYARUT  = RUT.format(RUT.clean('76.472.186-1'))
 
 const AprobadoReprobadoList = ['Aprobado', 'Reprobado']
 
+function nomalizeTypeClass (val) {
+  if (Array.isArray(val)) {
+    return toUpper(val.join('/'))
+  } else {
+    return toUpper(val)
+  }
+}
+
 const meta = module.exports.meta = {
   id: '2',
   title: 'Certificado de Competencias',
@@ -42,23 +50,13 @@ const meta = module.exports.meta = {
       format: toUpper,
       required: true,
     },
-    // {
-    //   name: '',
-    //   title: '',
-    //   helptext: 'EXCAVADORA',
-    //   list: [
-    //     ''
-    //   ],
-    //   required: true,
-    // },
     {
       name: 'licMuniClase',
       title: 'Clase (Licencia Municipalidad)',
       helptext: 'B/D',
-      type: 'multiple', // Multiple selección
-      format: toUpper,
-      list: [ 'B', 'C', 'D', 'E', 'A1', 'A2', 'A3', 'A4', 'A5' ],
-      required: true,
+      type: 'checkbox',
+      format: nomalizeTypeClass,
+      list: [ 'B', 'C', 'D', 'E', 'A1', 'A2', 'A3', 'A4', 'A5' ]
     },
     {
       name: 'licMuniOtorgada',
@@ -310,7 +308,7 @@ module.exports.create = async ({
 
       configLineType1(`Nombre:`, upperFirst(fullName), 228)
       configLineType1(`Rut:`, RUT.format(RUT.clean(rut)), 244)
-      configLineType1(`Clase:`, toUpper(licMuniClase), 297)
+      configLineType1(`Clase:`, nomalizeTypeClass(licMuniClase), 297)
       configLineType1(`Otorgada:`, licMuniOtorgada, 313)
       configLineType1(`Restricciones:`, licMuniRestricciones, 330)
       configLineType1(`Fecha de Control:`, moment(licMuniControlDate).format('L'), 347)

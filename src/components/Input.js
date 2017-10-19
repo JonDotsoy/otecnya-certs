@@ -19,6 +19,27 @@ const InputLabel = styled.label `
   display: block;
 `
 
+const InputFormCheckboxLabel = styled.label `
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  line-height: normal;
+  font-size: 24px;
+
+  color: #222222;
+
+  margin-bottom: 20px;
+  padding-left: 20px;
+`
+
+const InputFormCheckboxContainer = styled.div `
+
+`
+
+const InputFormCheckbox = styled.input `
+
+`
+
 const InputFormInput = styled.input `
   width: 100%;
   background: #FFFFFF;
@@ -51,16 +72,28 @@ module.exports.Input = (opts) => {
   return (
     <InputContainer>
       <InputLabel>{label}</InputLabel>
-      <InputFormInput {...opts} list={nameList}></InputFormInput>
       {
-        Array.isArray(list) &&
-        <datalist id={nameList}>
-          {
-            list.map(element => (
-              <option key={element} value={element} />
-            ))
-          }
-        </datalist>
+        (opts.type === 'checkbox') ? (
+          Array.isArray(list) &&
+          list.map(element => (
+            <InputFormCheckboxContainer key={element}>
+              <InputFormCheckbox {...opts} id={`${opts.name}-${element}`} value={element}/>
+              <InputFormCheckboxLabel htmlFor={`${opts.name}-${element}`}>{element}</InputFormCheckboxLabel>
+            </InputFormCheckboxContainer>
+          ))
+        ) : (
+          [
+            <InputFormInput {...opts} list={nameList}></InputFormInput>,
+            Array.isArray(list) &&
+            <datalist id={nameList}>
+              {
+                list.map(element => (
+                  <option key={element} value={element} />
+                ))
+              }
+            </datalist>
+          ]
+        )
       }
     </InputContainer>
   )
