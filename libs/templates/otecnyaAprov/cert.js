@@ -9,7 +9,7 @@ const path = require('path')
 
 module.exports.meta = {
   id: '1',
-  title: 'Certificado Aprovatorio',
+  title: 'Diploma',
   image: `data:image/png;base64,${fs.readFileSync(path.resolve(__dirname, './cover.png')).toString('base64')}`,
   fields: [
     {
@@ -26,6 +26,13 @@ module.exports.meta = {
       helptext: '12.345.678-9',
       type: 'text',
       format: (value) => RUT.format(RUT.clean(value)),
+      required: true,
+    },
+    {
+      name: 'business',
+      title: 'Empresa',
+      helptext: 'ACHS',
+      format: toUpper,
       required: true,
     },
     {

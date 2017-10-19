@@ -4,8 +4,13 @@ const RUT = require('rut.js')
 const moment = require('moment-timezone')
 const toUpper = require('lodash/toUpper')
 const capitalize = require('lodash/capitalize')
+const startCase = require('lodash/startCase')
+const upperFirst = require('lodash/upperFirst')
 const fs = require('fs')
 const path = require('path')
+
+const OTECNYANAME = 'Capacitaciones Otecnya Ltda'
+const OTECNYARUT  = RUT.format(RUT.clean('76.472.186-1'))
 
 const AprobadoReprobadoList = ['Aprobado', 'Reprobado']
 
@@ -31,11 +36,28 @@ const meta = module.exports.meta = {
       required: true,
     },
     {
+      name: 'business',
+      title: 'Empresa',
+      helptext: 'ACHS',
+      format: toUpper,
+      required: true,
+    },
+    // {
+    //   name: '',
+    //   title: '',
+    //   helptext: 'EXCAVADORA',
+    //   list: [
+    //     ''
+    //   ],
+    //   required: true,
+    // },
+    {
       name: 'licMuniClase',
       title: 'Clase (Licencia Municipalidad)',
       helptext: 'B/D',
-      type: 'text',
+      type: 'multiple', // Multiple selección
       format: toUpper,
+      list: [ 'B', 'C', 'D', 'E', 'A1', 'A2', 'A3', 'A4', 'A5' ],
       required: true,
     },
     {
@@ -50,6 +72,10 @@ const meta = module.exports.meta = {
       title: 'Restricciones (Licencia Municipalidad)',
       helptext: 'Sin Restricciones',
       type: 'text',
+      list: [
+        'Sin Restricciones',
+        'Debe usar lentes'
+      ],
       required: true,
     },
     {
@@ -63,30 +89,47 @@ const meta = module.exports.meta = {
     {
       name: 'licEquipMarca',
       title: 'Marca (Identificación del Equipo)',
-      helptext: 'Hyundai',
+      helptext: 'MOTONIVELADORA / CATERPILLAR / 140 M / 2016',
       type: 'text',
-      required: true,
-    },
-    {
-      name: 'licEquipModelo',
-      title: 'Modelo (Identificación del Equipo)',
-      helptext: 'ROBEX 520 l9',
-      type: 'text',
-      format: toUpper,
-      required: true,
-    },
-    {
-      name: 'licEquipAno',
-      title: 'Año (Identificación del Equipo)',
-      helptext: moment().format('YYYY'),
-      type: 'number',
-      get default () { return moment().format('YYYY') },
+      list: [
+        "RODILLOS / HAMM / 3412 / 2011",
+        "RODILLOS / HAMM / 3520 / 2008",
+        "RODILLOS / BOMAG / BW219DH4 / 2013",
+        "MOTONIVELADORA / CATERPILLAR / 140 M / 2015",
+        "MOTONIVELADORA / CATERPILLAR / 140 M / 2016",
+        "MOTONIVELADORA / CATERPILLAR / 120 M / 2017",
+        "CARGADOR FRONTAL / KOMATSU / WA380 / 2017",
+        "CARGADOR FRONTAL / JHON DEERE / 744 K / 2012",
+        "CARGADOR FRONTAL / CATERPILLAR / L 966 / 2017",
+        "CAMION LUBRICADOR / CHEVROLET / NQR 908 / 2010",
+        "TRACTO CAMION / MAN / TGS 33 540 / 2015",
+        "TRACTO CAMION / EAGER BEAVER / GLS 60 / 2016",
+        "RETRO EXCAVADORA / CATERPILLAR / MOD 416 F / 2017",
+        "BULLDOZER / CATERPILLAR / D8T / 2011",
+        "CAMION COMBUSTIBLE / MERCEDES BENZ / ATEGO 1624 / 2017",
+        "CAMION TOLVA / MERCEDES BENZ / ACTROS 4144 K / 2017",
+        "CAMION LIBRE / MERCEDES BENZ / ACTROS 3336 K / 2012",
+        "EXCAVADORES / KOMATSU / PC450LC-8 / 2013",
+        "EXCAVADORES / KOMATSU / PC450LC-8 / 2014",
+        "EXCAVADORES / KOMATSU / PC450LC-8 / 2015",
+        "EXCAVADORES / KOMATSU / PC450LC-8 / 2016",
+        "EXCAVADORES / KOMATSU / PC450LC-8 / 2017",
+        "EXCAVADORES / KOMATSU / PC300 / 2012",
+        "EXCAVADORES / KOBELCO / SK210M / 2011",
+        "EXCAVADORES / HYUNDAI / ROBEX 330 LC 95 / 2015",
+        "EXCAVADORES / HYUNDAI / ROBEX 330 LC 95 / 2016",
+        "EXCAVADORES / HYUNDAI / ROBEX 330 LC 95 / 2017",
+        "EXCAVADORES / CATERPILLAR / 390 L / 2013",
+        "EXCAVADORES / CATERPILLAR / 323 D / 2017",
+        "EXCAVADORES / CATERPILLAR / 330 D / 2017",
+      ],
       required: true,
     },
     {
       name: 'resultEvaluationConocimientoDelEquipo',
       title: 'Conocimiento del equipo (Evaluados Teórico)',
       helptext: 'Aprobado',
+      default: 'Aprobado',
       list: AprobadoReprobadoList,
       required: true,
     },
@@ -94,6 +137,7 @@ const meta = module.exports.meta = {
       name: 'resultEvaluationHabilidaddeOperacion',
       title: 'Habilidad de Operación (Evaluados Practico)',
       helptext: 'Aprobado',
+      default: 'Aprobado',
       list: AprobadoReprobadoList,
       required: true,
     },
@@ -101,6 +145,7 @@ const meta = module.exports.meta = {
       name: 'resultEvaluationSeguridadOperacionaldelEquipo',
       title: 'Seguridad Operacional del Equipo (Evaluados Teórico/Practico)',
       helptext: 'Aprobado',
+      default: 'Aprobado',
       list: AprobadoReprobadoList,
       required: true,
     },
@@ -108,6 +153,7 @@ const meta = module.exports.meta = {
       name: 'resultEvaluationAislacionBloqueoPermisodeTrabajo',
       title: 'Aislación/Bloqueo/Permiso de Trabajo (Evaluados Teórico/Practico)',
       helptext: 'Aprobado',
+      default: 'Aprobado',
       list: AprobadoReprobadoList,
       required: true,
     },
@@ -115,6 +161,7 @@ const meta = module.exports.meta = {
       name: 'resultEvaluationAlturaFisicaEnEquipos',
       title: 'Altura Física en Equipos (Evaluados Teórico)',
       helptext: 'Aprobado',
+      default: 'Aprobado',
       list: AprobadoReprobadoList,
       required: true,
     },
@@ -122,6 +169,7 @@ const meta = module.exports.meta = {
       name: 'resultEvaluationOperacionEquipoPesado',
       title: 'Operación Equipo Pesado (Evaluados Teórico/Practico)',
       helptext: 'Aprobado',
+      default: 'Aprobado',
       list: AprobadoReprobadoList,
       required: true,
     },
@@ -129,6 +177,7 @@ const meta = module.exports.meta = {
       name: 'resultEvaluationControlDeIncendioEnEquipo',
       title: 'Control de Incendio en Equipo (Evaluados Teórico)',
       helptext: 'Aprobado',
+      default: 'Aprobado',
       list: AprobadoReprobadoList,
       required: true,
     },
@@ -143,6 +192,7 @@ const meta = module.exports.meta = {
       name: 'capacitationEmpresaSolicitante',
       title: 'Empresa Solicitante',
       helptext: 'CONSORCIO CONPAX OHL VALKO S.A',
+      default: 'CONSORCIO CONPAX OHL VALKO S.A',
       format: toUpper,
       required: true,
     },
@@ -150,6 +200,7 @@ const meta = module.exports.meta = {
       name: 'capacitationRutEmpresaSolicitante',
       title: 'Rut Empresa Solicitante',
       helptext: '12.345.678-9',
+      default: '76.447.709-K',
       type: 'text',
       format: (value) => RUT.format(RUT.clean(value)),
       required: true,
@@ -184,15 +235,16 @@ module.exports.create = async ({
   // format data
 
   const {
+    code,
     fullName,
     rut,
     licMuniClase,
     licMuniOtorgada,
     licMuniRestricciones,
     licMuniControlDate,
-    licEquipMarca,
-    licEquipModelo,
-    licEquipAno,
+    licEquipMarca: licEquip,
+    // licEquipModelo,
+    // licEquipAno,
     resultEvaluationConocimientoDelEquipo,
     resultEvaluationHabilidaddeOperacion,
     resultEvaluationSeguridadOperacionaldelEquipo,
@@ -206,6 +258,8 @@ module.exports.create = async ({
     createdAt,
     expiration
   } = data
+
+  const [licEquipType, licEquipMarca, licEquipModelo, licEquipAno] = licEquip.split(' / ')
 
   const doc = new PDFDocument({
     size: [ 816, 1056 ]
@@ -224,9 +278,10 @@ module.exports.create = async ({
       // Include Base image
       doc.image(__dirname + '/baseCert.png', 0, 0)
 
+      doc.text(`Certificado N°${code}`, 48.431, 850, {width: 300, align: 'left'})
 
       // 25 de agosto 2017
-      doc.text(`Santiago ${moment(createdAt).format('DD [de] MMMM YYYY')}, Capacitaciones Otecnya Ltda, Rut 76.296.246-2, extiende el presente certificado de aprobación de instrumentos de evaluación y observación de competencias para la operación de EXCAVADORA, Según se detalla a continuación:`,
+      doc.text(`Santiago ${moment(createdAt).format('DD [de] MMMM YYYY')}, ${OTECNYANAME}, Rut ${OTECNYARUT}, extiende el presente certificado de aprobación de instrumentos de evaluación y observación de competencias para la operación de ${licEquipType}, Según se detalla a continuación:`,
         48.431,
         144.777,
         {
@@ -253,7 +308,7 @@ module.exports.create = async ({
           }
         )
 
-      configLineType1(`Nombre:`, fullName, 228)
+      configLineType1(`Nombre:`, upperFirst(fullName), 228)
       configLineType1(`Rut:`, RUT.format(RUT.clean(rut)), 244)
       configLineType1(`Clase:`, toUpper(licMuniClase), 297)
       configLineType1(`Otorgada:`, licMuniOtorgada, 313)
@@ -262,6 +317,7 @@ module.exports.create = async ({
       configLineType1(`Marca:`, licEquipMarca, 400)
       configLineType1(`Modelo:`, toUpper(licEquipModelo), 417)
       configLineType1(`Año:`, licEquipAno, 433)
+
 
       const configLineTable1 = (aspecto, type, evaluacion, top) => doc
         .text(aspecto,
