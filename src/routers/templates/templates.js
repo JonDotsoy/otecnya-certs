@@ -57,6 +57,7 @@ router.get('/create/:idTemplate', (req, res, next) => {
   const view = <CreateCertView
     urlSubmit={`/create/${idTemplate}`}
     fields={template.meta.fields}
+    defaultData={req.query}
   />
 
   res.renderReact(view, { title: template.meta.title })

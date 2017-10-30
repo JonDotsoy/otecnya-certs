@@ -22,6 +22,7 @@ const Title = styled.h1`
   font-weight: normal;
   line-height: normal;
   font-size: 24px;
+  padding-bottom: 20px;
 
   color: #222222;
 `
@@ -99,7 +100,7 @@ const FieldDataContainer = ({title, value}) => (
   </ContainerBlockElements>
 )
 
-const CertView = module.exports.CertView = ({cert, deleteLink, rawLink, authenticatedMode}) => {
+const CertView = module.exports.CertView = ({cert, cloneLink, deleteLink, rawLink, authenticatedMode}) => {
   return (
     <BodyContainer>
 
@@ -119,7 +120,7 @@ const CertView = module.exports.CertView = ({cert, deleteLink, rawLink, authenti
       }
 
       <ContainerBlockElements>
-        <Title>{cert._template.title}</Title>
+        <Title title={`Certificado ${cert._template.title}`}>{cert._template.title}</Title>
       </ContainerBlockElements>
 
       {
@@ -148,6 +149,10 @@ const CertView = module.exports.CertView = ({cert, deleteLink, rawLink, authenti
         {
           authenticatedMode === true &&
           <Btn href={deleteLink} text='Eliminar' priority='danger' />
+        }
+        {
+          authenticatedMode === true &&
+          <Btn href={cloneLink} text="Create uno similar"></Btn>
         }
       </ContainerBlockElements>
 

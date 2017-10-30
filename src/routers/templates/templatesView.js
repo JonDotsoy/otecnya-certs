@@ -83,7 +83,7 @@ const TemplatesView = module.exports.TemplatesView = ({templates}) => {
   )
 }
 
-const CreateCertView = module.exports.CreateCertView = ({urlSubmit, fields}) => {
+const CreateCertView = module.exports.CreateCertView = ({urlSubmit, fields, defaultData}) => {
   return (
     <BodyContainer>
       <MenuTop>
@@ -96,7 +96,16 @@ const CreateCertView = module.exports.CreateCertView = ({urlSubmit, fields}) => 
         {
           fields.map(field => (
             <ContainerBlockElements key={field.name} marginTop='20px'>
-              <Input list={field.list} disabled={field.disabled} placeholder={field.helptext} name={field.name} label={field.title} type={field.type} required={field.required} defaultValue={field.default} />
+              <Input
+                list={field.list}
+                disabled={field.disabled}
+                placeholder={field.helptext}
+                name={field.name}
+                label={field.title}
+                type={field.type}
+                required={field.required}
+                defaultValue={defaultData[field.name] || field.default}
+              />
             </ContainerBlockElements>
           ))
         }
@@ -111,4 +120,3 @@ const CreateCertView = module.exports.CreateCertView = ({urlSubmit, fields}) => 
     </BodyContainer>
   )
 }
-

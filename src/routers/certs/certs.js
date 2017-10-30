@@ -1,5 +1,5 @@
 // @flow
-const t = require('flow-runtime')
+import url from 'url'
 const router = require('express').Router()
 require('../../../libs/express-allow-async')(router)
 const fs = require('fs')
@@ -63,7 +63,7 @@ router.getAsync('/certs', async (req, res, next) => {
   res.renderReact(<CertsView certs={certs} autocompleteSearch={autocomplete.values()} defaultValueSearch={filter}/>)
 })
 
-router.postAsync('/certs/:idCert/delete', async (req, res, next) => {
+router.postAsync('/certs/:idCert/delete', policyRequireLogin, async (req, res, next) => {
   const {idCert} = req.params
   const authenticated = get(req, ['session', 'auth', 'ok'], false)
 
@@ -110,9 +110,26 @@ router.getAsync('/certs/:idCert', async (req, res, next) => {
   // return res.json(nextCert)
 
   res.renderReact(
-    <CertView cert={nextCert} deleteLink={`/certs/${idCert}/delete`} rawLink={`/certs/${idCert}/raw`} authenticatedMode={authenticated}/>
+    <CertView cert={nextCert} cloneLink={`/certs/${idCert}/clone`} deleteLink={`/certs/${idCert}/delete`} rawLink={`/certs/${idCert}/raw`} authenticatedMode={authenticated}/>
   )
 })
+
+async function routeCloneCert (req, res, next) {
+  const {idCert} = req.params
+
+  const cert = await Cert.findOne({code: idCert})
+
+  if (cert === null) return next()
+
+  // return res.json(cert)
+
+  return res.redirect(302, url.format({
+    pathname: `/create/${cert._template.id}`,
+    query: cert.data
+  }))
+}
+
+router.getAsync('/certs/:idCert/clone', policyRequireLogin, routeCloneCert)
 
 router.getAsync('/certs/:idCert/raw', async (req, res, next) => {
   const {idCert} = req.params

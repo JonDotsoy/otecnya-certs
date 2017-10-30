@@ -7,7 +7,7 @@ const BtnStyledLinkBlock = css `
   display: block;
   padding: 10px 10px;
   width: 100%;
-  
+
   &:hover, &:focus {
     box-shadow: none;
     text-decoration: underline;
@@ -16,6 +16,7 @@ const BtnStyledLinkBlock = css `
 
 const BtnElement = styled.button `
   display: inline-block;
+  margin-bottom: 10px;
 
   box-sizing: border-box;
   font-family: Roboto;
