@@ -104,15 +104,15 @@ const CertView = module.exports.CertView = ({cert, deleteLink, rawLink, authenti
     <BodyContainer>
 
       {
-        authenticatedMode === true && 
+        authenticatedMode === true &&
         <MenuTop>
-          <LinkElement href="/templates">Plantillas</LinkElement>
+          <LinkElement href="/certs">Certificados</LinkElement>
           <LinkElement href="/logout" stylefloat='right'>Salir</LinkElement>
         </MenuTop>
       }
 
       {
-        authenticatedMode === false && 
+        authenticatedMode === false &&
         <MenuTop>
           <LinkElement href="/logout" stylefloat='right'>Salir</LinkElement>
         </MenuTop>
@@ -146,7 +146,7 @@ const CertView = module.exports.CertView = ({cert, deleteLink, rawLink, authenti
       <ContainerBlockElements>
         <Btn text='Descargar' target="_blank" style={{'marginRight': '10px'}} href={rawLink}/>
         {
-          authenticatedMode === true && 
+          authenticatedMode === true &&
           <Btn href={deleteLink} text='Eliminar' priority='danger' />
         }
       </ContainerBlockElements>
@@ -182,7 +182,6 @@ const CertsView = module.exports.CertsView = ({certs, defaultValueSearch, autoco
 
   </BodyContainer>
 )
-
 
 const CertCardView = ({href, fullName, templateName, code}) => (
   <CertCardContainer href={href}>
