@@ -39,22 +39,22 @@ router.getAsync('/certs', async (req, res, next) => {
   let certs = await Cert.find({})
 
   // Autocomplete data
-  const autocomplete = new Set()
+  const autocomplete = new Map()
 
   certs.forEach(cert => {
-    autocomplete.add(cert._template.title)
-    autocomplete.add(cert.fullName)
+    // Added the title template to autocomplete
+    if (cert._template.title !== undefined) autocomplete.set(cert._template.title, Object.assign(cert._template.title, {[Symbol.for('typeShow')]: 'Plantilla'}))
+    // Added name people to autocomplete
+    if (cert.fullName !== undefined) autocomplete.set(cert.fullName, Object.assign(cert.fullName, {[Symbol.for('typeShow')]: 'Nombre'}))
+    // Added business to autocomplete
+    if (cert.data.business !== undefined) autocomplete.set(cert.data.business, Object.assign(cert.data.business, {[Symbol.for('typeShow')]: 'Empresa'}))
   })
 
   if (filter) {
     certs = certs.filter(cert => {
-      if (toLower(cert.fullName).indexOf(filterLower) !== -1) {
-        return true
-      }
-
-      if (toLower(cert._template.title) === filterLower) {
-        return true
-      }
+      if (toLower(cert.fullName).indexOf(filterLower) !== -1) return true
+      if (toLower(cert._template.title) === filterLower) return true
+      if (toLower(cert.data.business) === filterLower) return true
 
       return false
     })

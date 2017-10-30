@@ -3,7 +3,7 @@ const uniqueId = require('lodash/uniqueId')
 const {default: styled} = require('styled-components')
 
 const InputContainer = styled.div `
-  
+
 `
 
 const InputLabel = styled.label `
@@ -67,8 +67,7 @@ const InputFormInput = styled.input `
 
 module.exports.Input = (opts) => {
   const {label, list} = opts
-  const nameList = list && `list-${opts.name || uniqueId()}`
-
+  const nameList = `list-${opts.name || uniqueId()}`
   return (
     <InputContainer>
       <InputLabel>{label}</InputLabel>
@@ -88,7 +87,7 @@ module.exports.Input = (opts) => {
             <datalist id={nameList}>
               {
                 list.map(element => (
-                  <option key={element} value={element} />
+                  <option key={element} value={element}>{element[Symbol.for('typeShow')]}</option>
                 ))
               }
             </datalist>

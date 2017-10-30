@@ -1,9 +1,5 @@
 # Roadmap
 
-## features
-
-* TODO: Search by business
-
 ## Normalization
 
 * TODO: Write a good changelog file

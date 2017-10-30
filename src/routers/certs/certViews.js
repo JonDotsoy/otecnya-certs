@@ -75,14 +75,14 @@ const InputSearchBtn = styled.button `
 const InputSearch = ({defaultValue, autocomplete, listName}) => (
   <InputSearchContent>
     <form action="/certs" method="GET">
-      <Input list={listName} name="filter" placeholder="Search..." defaultValue={defaultValue}/>
-      <datalist id={listName}>
+      <Input list={autocomplete} name="filter" placeholder="Search..." defaultValue={defaultValue}/>
+      {/* <datalist id={listName}>
         {
           autocomplete.map((value) => (
             <option key={value} value={value}></option>
           ))
         }
-      </datalist>
+      </datalist> */}
       <InputSearchBtn />
     </form>
   </InputSearchContent>
@@ -178,6 +178,7 @@ const CertsView = module.exports.CertsView = ({certs, defaultValueSearch, autoco
               href={`/certs/${cert.code}`}
               key={cert.code}
               fullName={cert.fullName}
+              business={cert.data.business}
               code={cert.code}
               templateName={cert._template.title}
             />
@@ -188,10 +189,10 @@ const CertsView = module.exports.CertsView = ({certs, defaultValueSearch, autoco
   </BodyContainer>
 )
 
-const CertCardView = ({href, fullName, templateName, code}) => (
+const CertCardView = ({href, fullName, templateName, code, business}) => (
   <CertCardContainer href={href}>
     <hgroup>
-      <NameCert>{templateName}</NameCert>
+      <NameCert>{templateName}{business && <spam> ({business})</spam>}</NameCert>
       <TitleCert>{fullName}</TitleCert>
       <CodeCert>{code}</CodeCert>
     </hgroup>
