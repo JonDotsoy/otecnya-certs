@@ -99,5 +99,3 @@ const Home = module.exports.Home = ({notFoundCert}) => (
     </ContainerBlockElements>
   </BodyContainer>
 )
-
-
