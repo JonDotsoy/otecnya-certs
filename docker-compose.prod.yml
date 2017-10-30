@@ -1,0 +1,6 @@
+version: "3"
+
+services:
+  app:
+    image: "otecnya-certs:$npm_package_version"
+    build: .

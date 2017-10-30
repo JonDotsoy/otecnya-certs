@@ -6,7 +6,7 @@
   "scripts": {
     "build": "gulp dist",
     "start": "node src/server.js",
-    "services": "docker-compose",
+    "services": "docker-compose -f docker-compose.prod.yml",
     "watch": "gulp server-watch"
   },
   "keywords": [],
