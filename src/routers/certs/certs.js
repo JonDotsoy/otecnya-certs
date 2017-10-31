@@ -43,11 +43,11 @@ router.getAsync('/certs', async (req, res, next) => {
 
   certs.forEach(cert => {
     // Added the title template to autocomplete
-    if (cert._template.title !== undefined) autocomplete.set(cert._template.title, Object.assign(cert._template.title, {[Symbol.for('typeShow')]: 'Plantilla'}))
+    if (cert._template.title) autocomplete.set(cert._template.title, Object.assign(cert._template.title, {[Symbol.for('typeShow')]: 'Plantilla'}))
     // Added name people to autocomplete
-    if (cert.fullName !== undefined) autocomplete.set(cert.fullName, Object.assign(cert.fullName, {[Symbol.for('typeShow')]: 'Nombre'}))
+    if (cert.fullName) autocomplete.set(cert.fullName, Object.assign(cert.fullName, {[Symbol.for('typeShow')]: 'Nombre'}))
     // Added business to autocomplete
-    if (cert.data.business !== undefined) autocomplete.set(cert.data.business, Object.assign(cert.data.business, {[Symbol.for('typeShow')]: 'Empresa'}))
+    if (cert.data.business) autocomplete.set(cert.data.business, Object.assign(cert.data.business, {[Symbol.for('typeShow')]: 'Empresa'}))
   })
 
   if (filter) {
