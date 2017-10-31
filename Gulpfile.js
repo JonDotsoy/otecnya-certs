@@ -8,7 +8,7 @@ const fs = require('fs')
 const bs = browserSync.create()
 
 const buildFilesTask = () => (
-  gulp.src(['libs/**/*.js', 'src/**/*.js'], { base: __dirname })
+  gulp.src(['libs/**/*.js', 'src/**/*.js', 'utilcli.js'], { base: __dirname })
   .pipe(
     require('gulp-babel')(
       {
@@ -40,7 +40,7 @@ const buildFilesTask = () => (
 )
 
 const copyFileTask = () => (
-  gulp.src(['libs/**/templates/*/*.+(png|ttf)','package.json', 'package-lock.json', 'public/*'], { base: __dirname })
+  gulp.src(['libs/**/templates/*/*.+(png|ttf)', 'package.json', 'package-lock.json', 'public/*'], { base: __dirname })
   .pipe(gulp.dest('dist'))
 )
 
@@ -99,4 +99,3 @@ gulp.task('dist', [
   'copy-package-file',
   'dist-scripts'
 ])
-

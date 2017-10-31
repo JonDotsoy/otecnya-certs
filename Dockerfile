@@ -10,4 +10,7 @@ RUN npm install --production
 
 COPY dist/ /app
 
+ENV STORE_FILES /rawfiles
+VOLUME /rawfiles
+
 CMD npm run --production start

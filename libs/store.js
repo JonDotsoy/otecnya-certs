@@ -30,7 +30,7 @@ const con = module.exports.con = mongoose.createConnection(urlMongoDB, {})
 const Account = module.exports.Account = con.model('accounts', AccountSchema)
 const Cert = module.exports.Cert = con.model('certs', CertSchema)
 
-Cert.manufacture = async function manufactureCertFromTemplate (template: any, data: any) {
+export async function manufactureCertSteps (template: any, data: any) {
   // Validate Data
   const certData = {
     createAt: new Date(),
@@ -42,49 +42,81 @@ Cert.manufacture = async function manufactureCertFromTemplate (template: any, da
     _template: null,
   }
 
-  for (const field of template.meta.fields) {
-    if (field.required === true && (field.name in data) === false) {
-      throw new TypeError(`Require "${field.name}" param.`)
-    }
+  return {
+    get data () {
+      return certData
+    },
+    async generateData (opts = {}) {
+      const loadCode = opts.loadCode
 
-    certData.data[field.name] = data[field.name]
+      for (const field of template.meta.fields) {
+        if (opts.ignoreRequires !== true) {
+          if (field.required === true && (field.name in data) === false) {
+            throw new TypeError(`Require "${field.name}" param.`)
+          }
+        }
 
-    switch (field.name) {
-      case 'rut':
-      case 'fullName':
-        certData[field.name] = data[field.name]
+        certData.data[field.name] = data[field.name]
+
+        switch (field.name) {
+          case 'rut':
+          case 'fullName':
+            certData[field.name] = data[field.name]
+        }
+      }
+
+      // prepare next id number
+      let CertCode: string|number
+      if (typeof loadCode === 'function') {
+        CertCode = await loadCode()
+      } else {
+        CertCode = `${ Number(await Cert.count()) + 23230 }`
+      }
+
+      certData.code = certData.data.code = `${CertCode}`
+      certData._template = {...template.meta, image: undefined}
+      certData.path_pdf_file = path.resolve(PATHSTOREPDF, `./cert-${CertCode}.pdf`)
+    },
+    async writeFile () {
+      // Make PDF file
+      const streams = await template.create({
+        data: certData.data,
+        stream: fs.createWriteStream(certData.path_pdf_file),
+      })
+
+      return streams
+    },
+    async update () {
+      return await Cert.update({ code: certData.code }, certData)
+    },
+    async save () {
+      // Save Cert generated
+      let cert
+
+      try {
+        cert = await (new Cert(certData)).save()
+      } catch (ex) {
+        try {
+          // Has error remove the file created
+          fs.unlinkSync(certData.path_pdf_file)
+        } catch (ex) {
+          console.error(ex)
+        }
+        throw ex
+      }
+
+      return cert
     }
   }
+}
 
-  // prepare next id number
-  const CertCode: number = Number(await Cert.count()) + 23230
+Cert.manufacture = async function manufactureCertFromTemplate (template: any, data: any) {
+  const e = await manufactureCertSteps(template, data)
 
-  certData.code = certData.data.code = `${CertCode}`
-  certData._template = {...template.meta, image: undefined}
-  certData.path_pdf_file = path.resolve(PATHSTOREPDF, `./cert-${CertCode}.pdf`)
+  await e.generateData()
+  await e.writeFile()
 
-  // Make PDF file
-  const streams = await template.create({
-    data: certData.data,
-    stream: fs.createWriteStream(certData.path_pdf_file),
-  })
-
-  // return certData
-
-  // Save Cert generated
-  let cert
-
-  try {
-    cert = await (new Cert(certData)).save()
-  } catch (ex) {
-    try {
-      // Has error remove the file created
-      fs.unlinkSync(certData.path_pdf_file)
-    } catch (ex) {
-      console.error(ex)
-    }
-    throw ex
-  }
+  const cert = await e.save()
 
   return {
     ok: true,
@@ -97,6 +129,9 @@ const ready = (async () => {
 
   // default credential
   const adminusername = 'admin'
+  if (typeof loadCode === 'function') {
+
+  }
   const adminpassword = textToMD5('admin')
 
   let currentUserAdmin = await Account.findOne({username: adminusername}).exec()
