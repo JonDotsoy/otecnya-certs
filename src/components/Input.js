@@ -68,6 +68,7 @@ const InputFormInput = styled.input `
 module.exports.Input = (opts) => {
   const {label, list} = opts
   const nameList = `list-${opts.name || uniqueId()}`
+
   return (
     <InputContainer>
       <InputLabel>{label}</InputLabel>
@@ -76,7 +77,7 @@ module.exports.Input = (opts) => {
           Array.isArray(list) &&
           list.map(element => (
             <InputFormCheckboxContainer key={element}>
-              <InputFormCheckbox {...opts} id={`${opts.name}-${element}`} value={element}/>
+              <InputFormCheckbox {...opts} id={`${opts.name}-${element}`} value={element} checked={ [].concat( opts.defaultValue ).indexOf(element) !== -1 }/>
               <InputFormCheckboxLabel htmlFor={`${opts.name}-${element}`}>{element}</InputFormCheckboxLabel>
             </InputFormCheckboxContainer>
           ))
