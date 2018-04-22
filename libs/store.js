@@ -1,39 +1,71 @@
 // @flow
+const config = require('../config')
 const t = require('flow-runtime')
 const url = require('url')
 const mongoose = module.exports.mongoose = require('mongoose')
 const crypto = require('crypto')
 const {AccountSchema} = require('./storeSchemas/AccountSchema')
 const {CertSchema} = require('./storeSchemas/CertSchema')
-const os = require('os')
+const {IngrementSchema} = require('./storeSchemas/IngrementSchema')
 const fs = require('fs')
 const path = require('path')
 
 // Folder to out files
-const PATHSTOREPDF: string = process.env.STORE_FILES || os.tmpdir()
+const PATHSTOREPDF: string = config.store_file
 
 mongoose.Promise = Promise
 
-const textToMD5 = (data: Buffer|string) => crypto.createHash('md5').update(data,'utf8').digest().toString('HEX')
+const textToMD5 = (data: string|Buffer|DataView) => crypto.createHash('md5').update(data,'utf8').digest().toString('HEX')
 
 // Format Mongo URL
-const urlMongoDB: string = url.format({
-  protocol: 'mongodb',
-  slashes: true,
-  hostname: process.env.DB_HOST || '192.168.99.100',
-  pathname: process.env.DB_NAME || 'certs',
-})
+const urlMongoDB: string = config.mongo_uri
 
 const con = module.exports.con = mongoose.createConnection(urlMongoDB, {})
 
 // Models
 const Account = module.exports.Account = con.model('accounts', AccountSchema)
 const Cert = module.exports.Cert = con.model('certs', CertSchema)
+const Increment = module.exports.Increment = con.model('ingrements', IngrementSchema)
+
+Increment.nextIncrementValue = async function IncrementNextIncrementValue (key: string) {
+  const IngrementCertIds = await Increment.findOne({key})
+  const currentValue = IngrementCertIds.value
+  const nextValue = currentValue + 1
+
+  await Increment.update({key, value: nextValue})
+
+  return nextValue
+}
+
+PrepareDB()
+async function PrepareDB () {
+  console.log('Preparing DBs')
+  console.log('Preparing Increment')
+  const IngrementCertIds = await Increment.findOne({key: 'cert_ids'})
+  if (IngrementCertIds === null) {
+    console.log(`cert_ids not exists`)
+    const certs = await Cert.find({})
+
+    let initialIdCounter = 0
+    console.log('inspect certs')
+    for (const cert of certs) {
+      if (Number(cert.code) > initialIdCounter) {
+        initialIdCounter = Number(cert.code)
+      }
+    }
+    console.log('Is determinate initial id is ' + initialIdCounter + 1)
+    await Increment.create({
+      key: 'cert_ids',
+      value: initialIdCounter,
+    })
+  }
+}
 
 export async function manufactureCertSteps (template: any, data: any) {
   // Validate Data
   const certData = {
     createAt: new Date(),
+    /** @type {string|void} */
     path_pdf_file: undefined,
     fullName: undefined,
     code: undefined,
@@ -70,7 +102,7 @@ export async function manufactureCertSteps (template: any, data: any) {
       if (typeof loadCode === 'function') {
         CertCode = await loadCode()
       } else {
-        CertCode = `${ Number(await Cert.count()) + 23230 }`
+        CertCode = `${ await Increment.nextIncrementValue('cert_ids') }`
       }
 
       certData.code = certData.data.code = `${CertCode}`

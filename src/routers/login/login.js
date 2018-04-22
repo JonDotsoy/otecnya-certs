@@ -101,7 +101,7 @@ router.postAsync('/login', async (req, res) => {
   if (checked.ok === true) {
     req.session.auth = checked
 
-    return res.redirect('/templates', 302)
+    return res.redirect(302, '/templates')
   }
 
   res.renderReact(<Login username={username} correctChecked={checked.ok}/>)

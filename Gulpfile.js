@@ -77,7 +77,7 @@ const testServerConnected = webTestOpen('http://localhost:3000')
 const forkServer = (done) => {
   const nodemon = require('nodemon')
 
-  nodemon(`--require babel-core/register src/server`)
+  nodemon(`--require babel-core/register -w .env -w src -w config src/server`)
 
   nodemon.once('start', async () => {
     await testServerConnected()

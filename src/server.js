@@ -1,3 +1,5 @@
+const config = require('../config')
+
 require('../libs/express-allow-async')
 
 const moment = require('moment-timezone')
@@ -19,7 +21,7 @@ const {default: reset} = require('styled-reset')
 
 const store = require('../libs/store')
 
-const SECRET_KEY_SESSION = process.env.SECRET_KEY_SESSION || '123456'
+const SECRET_KEY_SESSION = config.secret_key_session
 
 injectGlobal`
   ${reset}
@@ -35,6 +37,8 @@ const app = express()
 app.use(session({
   secret: SECRET_KEY_SESSION,
   store: new MongoStore({mongooseConnection: store.con}),
+  resave: false,
+  saveUninitialized: false,
 }))
 
 app.use(bodyParser.json())
@@ -69,6 +73,8 @@ const run = async () => {
 
 }
 
-
 run()
-.catch(console.error)
+  .catch(err => {
+    console.error(err.stack || err)
+    process.exit(1)
+  })
