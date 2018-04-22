@@ -3,7 +3,7 @@ const url = require('url')
 const os = require('os')
 
 require('dotenv').config({
-  path: path.resolve( `${__dirname}/../.env` ),
+  path: path.resolve( `${__dirname}/.env` ),
 });
 
 module.exports = {
@@ -19,4 +19,3 @@ module.exports = {
   /** @type {string} */
   secret_key_session: process.env.SECRET_KEY_SESSION || '123456',
 }
-
