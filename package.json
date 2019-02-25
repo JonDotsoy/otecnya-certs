@@ -3,6 +3,10 @@
   "version": "1.0.4",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": "8.6.0",
+    "npm": "5.3.0"
+  },
   "scripts": {
     "build": "gulp dist",
     "start": "node src/server.js",
