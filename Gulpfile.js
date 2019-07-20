@@ -8,7 +8,7 @@ const fs = require('fs')
 const bs = browserSync.create()
 
 const buildFilesTask = () => (
-  gulp.src(['libs/**/*.js', 'src/**/*.js', 'utilcli.js'], { base: __dirname })
+  gulp.src(['libs/**/*.js', 'src/**/*.js', 'utilcli.js', 'config.js'], { base: __dirname })
   .pipe(
     require('gulp-babel')(
       {
@@ -89,13 +89,16 @@ const forkServer = (done) => {
   })
 }
 
-gulp.task('test-server-connected', testServerConnected)
-gulp.task('fork-server', forkServer)
-gulp.task('server-watch', ['fork-server', 'test-server-connected'], serverWatch)
-gulp.task('dist-scripts', buildFilesTask)
-gulp.task('copy-package-file', copyFileTask)
-
-gulp.task('dist', [
-  'copy-package-file',
-  'dist-scripts'
-])
+exports['test-server-connected'] = testServerConnected;
+exports['fork-server'] = forkServer;
+exports['server-watch'] = gulp.series(
+  gulp.parallel(forkServer, testServerConnected),
+  serverWatch,
+);
+exports['dist-scripts'] = buildFilesTask;
+exports['copy-package-file'] = copyFileTask;
+exports.dist = gulp.series(
+  copyFileTask,
+  buildFilesTask,
+);
+exports.default = exports['server-watch'];

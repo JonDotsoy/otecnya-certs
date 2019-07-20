@@ -8,8 +8,8 @@ const fs = require('fs')
 const path = require('path')
 
 module.exports.meta = {
-  id: '1',
-  title: 'Certificado',
+  id: '3',
+  title: 'Certificado de Camionero',
   image: `data:image/png;base64,${fs.readFileSync(path.resolve(__dirname, './cover2.png')).toString('base64')}`,
   fields: [
     {

@@ -2,5 +2,33 @@ version: "3"
 
 services:
   app:
+    restart: always
     image: "otecnya-certs:$npm_package_version"
     build: .
+    environment:
+      - DB_URI=mongodb://otecnya-certs:parke-2keep-debar3-wit1@db:27017/certs
+      # - DB_URI=mongodb://otecnya-certs:parke-2keep-debar3-wit1@159.203.99.252:27117/certs
+      # - DB_URI=mongodb://localhost:27117/certs
+    links:
+      - db:db
+    ports:
+      - '30001:3000'
+    volumes:
+      - rawfiles:/rawfiles
+
+  db:
+    restart: always
+    image: 'mongo:3.4.19'
+    environment:
+      MONGODB_USER: otecnya-certs
+      MONGODB_PASS: parke-2keep-debar3-wit1
+      MONGO_INITDB_ROOT_USERNAME: otecnya-certs
+      MONGO_INITDB_ROOT_PASSWORD: parke-2keep-debar3-wit1
+    ports:
+      - '27117:27017'
+    volumes:
+      - dbStore:/data/db
+
+volumes:
+  dbStore:
+  rawfiles:
