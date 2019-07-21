@@ -11,7 +11,8 @@
   "scripts": {
     "build": "gulp dist",
     "start": "node src/server.js",
-    "services": "docker-compose -f docker-compose.prod.yml",
+    "services-build": "docker-compose -f docker-compose.build.yml build",
+    "services-deploy": "docker-compose -f docker-compose.prod.yml up -d",
     "watch": "gulp server-watch"
   },
   "keywords": [],

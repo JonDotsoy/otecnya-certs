@@ -4,7 +4,6 @@ services:
   app:
     restart: always
     image: "otecnya-certs:$npm_package_version"
-    build: .
     environment:
       - DB_URI=mongodb://otecnya-certs:parke-2keep-debar3-wit1@db:27017/certs
       # - DB_URI=mongodb://otecnya-certs:parke-2keep-debar3-wit1@159.203.99.252:27117/certs
