@@ -2,6 +2,6 @@ version: "3"
 
 services:
   db:
-    image: 'mongo:3.4.9'
+    image: 'mongo:3.4.19'
     ports:
       - '27117:27017'

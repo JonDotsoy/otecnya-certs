@@ -20,7 +20,9 @@ const textToMD5 = (data: string|Buffer|DataView) => crypto.createHash('md5').upd
 // Format Mongo URL
 const urlMongoDB: string = config.mongo_uri
 
-const con = module.exports.con = mongoose.createConnection(urlMongoDB, {})
+const con = module.exports.con = mongoose.createConnection(urlMongoDB, {
+  useNewUrlParser: true,
+});
 
 // Models
 const Account = module.exports.Account = con.model('accounts', AccountSchema)
