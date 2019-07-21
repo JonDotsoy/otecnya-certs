@@ -74,7 +74,7 @@ const Home = module.exports.Home = ({notFoundCert}) => (
       <LinkElement stylefloat='right' href="/login">Ingresar</LinkElement>
     </MenuTop>
     <BrandContainer>
-      <img src='/OTECNYA.png' alt='Otecnya' />
+      <img src='/otecnya2.webp' alt='Otecnya' />
       <BrandContainerLegend>Certificados</BrandContainerLegend>
     </BrandContainer>
 

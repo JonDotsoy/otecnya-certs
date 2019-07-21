@@ -25,7 +25,7 @@ function nomalizeTypeClass (val) {
 const meta = module.exports.meta = {
   id: '2',
   title: 'Certificado de Competencias',
-  image: `data:image/png;base64,${fs.readFileSync(path.resolve(__dirname, './cover.png')).toString('base64')}`,
+  image: `data:image/png;base64,${fs.readFileSync(path.resolve(__dirname, './cover2.png')).toString('base64')}`,
   fields: [
     {
       name: 'fullName',
